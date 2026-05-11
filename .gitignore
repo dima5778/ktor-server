@@ -1,0 +1,6 @@
+# Project exclude paths
+/.gradle/
+/build/
+/build/classes/
+/build/classes/kotlin/main/
+src/main/resources/serviceAccountKey.json

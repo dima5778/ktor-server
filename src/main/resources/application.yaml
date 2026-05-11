@@ -1,0 +1,13 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - DirectoryApplication-Server.HttpKt.configureHttp
+      - DirectoryApplication-Server.SerializationKt.configureSerialization
+      - DirectoryApplication-Server.SecurityKt.configureSecurity
+      - DirectoryApplication-Server.ExposedKt.configureExposed
+      - DirectoryApplication-Server.PostgresKt.configurePostgres
+      - DirectoryApplication-Server.StatusPagesKt.configureStatusPages
+      - DirectoryApplication-Server.ResourcesKt.configureResources
+      - DirectoryApplication-Server.RoutingKt.configureRouting
