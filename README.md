@@ -35,7 +35,7 @@ src/main/kotlin/com/directory/
 │       └── EmployeeRepository.kt   # Интерфейс репозитория
 └── routes/
     ├── dto/
-        ├── AuthRequest.kt
+    │   ├── AuthRequest.kt
     │   ├── EmployeeRequest.kt
     │   └── EmployeeResponse.kt
     ├── AuthRoutes.kt
