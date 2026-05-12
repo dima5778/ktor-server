@@ -4,20 +4,18 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.response.*
 import java.io.File
 import java.io.FileInputStream
 
 fun Application.configureSecurity() {
     try {
-        val serviceAccountStream = if (File("serviceAccountKey.json").exists()) {
-            FileInputStream("serviceAccountKey.json")
+        val serviceAccountStream = if (File("scripts/serviceAccountKey.json").exists()) {
+            FileInputStream("scripts/serviceAccountKey.json")
         } else {
             // Способ 2: Из resources
-            this::class.java.classLoader.getResourceAsStream("serviceAccountKey.json")
+            this::class.java.classLoader.getResourceAsStream("scripts/serviceAccountKey.json")
                 ?: throw IllegalStateException("Файл serviceAccountKey.json не найден!")
         }
 
@@ -27,7 +25,7 @@ fun Application.configureSecurity() {
 
         if (FirebaseApp.getApps().isEmpty()) {
             FirebaseApp.initializeApp(options)
-            println("✅ Firebase Admin SDK инициализирован")
+            println("Firebase Admin SDK инициализирован")
         }
 
         install(Authentication) {
@@ -44,7 +42,7 @@ fun Application.configureSecurity() {
             }
         }
     } catch (e: Exception) {
-        println("⚠️  Firebase не удалось инициализировать: ${e.message}")
+        println("Firebase не удалось инициализировать: ${e.message}")
         e.printStackTrace()
     }
 }

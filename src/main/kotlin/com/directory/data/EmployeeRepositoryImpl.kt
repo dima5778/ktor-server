@@ -42,12 +42,13 @@ class EmployeeRepositoryImpl : EmployeeRepository {
     }
 
     override suspend fun searchEmployees(query: String): List<Employee> = dbQuery {
+        val lowerQuery = query.lowercase()
         EmployeesTable
             .selectAll()
             .where {
-                (EmployeesTable.name like "%$query%") or
-                        (EmployeesTable.position like "%$query%") or
-                        (EmployeesTable.department like "%$query%")
+                (EmployeesTable.name.lowerCase() like "%$lowerQuery%") or
+                        (EmployeesTable.position.lowerCase() like "%$lowerQuery%") or
+                        (EmployeesTable.department.lowerCase() like "%$lowerQuery%")
             }
             .map { row ->
                 Employee(

@@ -13,9 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
-    // Инициализация базы данных
     DatabaseFactory.init(this)
-    // Плагины
     configureSerialization()
     configureSecurity()
     configureRouting()
