@@ -4,6 +4,7 @@ import org.jetbrains.exposed.sql.Table
 
 object EmployeesTable : Table("employees") {
     val id = integer("id").autoIncrement()
+    val userId = varchar("user_id", 255)
     val name = varchar("name", 255)
     val position = varchar("position", 255)
     val phone = varchar("phone", 50)

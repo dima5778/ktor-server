@@ -44,7 +44,6 @@ object DatabaseFactory {
 
             transaction {
                 SchemaUtils.create(EmployeesTable)
-                seedDatabase()
             }
 
             println("Успешное подключение к Neon PostgreSQL!")

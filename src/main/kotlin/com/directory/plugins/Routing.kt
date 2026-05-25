@@ -23,36 +23,24 @@ fun Application.configureRouting() {
     val repository = EmployeeRepositoryImpl()
 
     routing {
-        // Главная страница
         get("/") {
             call.respondText("""
                 Сервер успешно работает!
                 Порт: 8080
                 
-                Публичные ссылки:
-                - GET /public/employees
-                - GET /public/employees/search?q=Иван
-                
                 Защищённые ссылки (требуют токен):
                 - GET /api/employees
+                - GET /api/employees/{id}
+                - GET /api/employees/search?q=текст
+                - POST /api/employees
+                - PUT /api/employees/{id}
+                - DELETE /api/employees/{id}
             """.trimIndent(), ContentType.Text.Plain)
         }
+
         authRoutes()
 
-        route("/public") {
-            get("/employees") {
-                val employees = repository.getAllEmployees()
-                call.respond(employees)
-            }
-
-            get("/employees/search") {
-                val query = call.request.queryParameters["q"] ?: ""
-                val employees = repository.searchEmployees(query)
-                call.respond(employees)
-            }
-        }
-
-        // Защищённые маршруты (с авторизацией Firebase)
+        // Только защищённые маршруты — публичных больше нет
         route("/api") {
             authenticate("firebase-auth") {
                 employeeRoutes(repository)

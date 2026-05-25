@@ -15,26 +15,41 @@ fun Route.employeeRoutes(repository: EmployeeRepository) {
     route("/employees") {
 
         get {
-            call.respond(repository.getAllEmployees())
+            // Получаем userId из Firebase токена
+            val userId = call.principal<UserIdPrincipal>()?.name
+                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+
+            call.respond(repository.getAllEmployees(userId))
         }
 
         get("/search") {
+            val userId = call.principal<UserIdPrincipal>()?.name
+                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+
             val query = call.request.queryParameters["q"] ?: ""
-            call.respond(repository.searchEmployees(query))
+            call.respond(repository.searchEmployees(query, userId))
         }
+
         get("{id}") {
+            val userId = call.principal<UserIdPrincipal>()?.name
+                ?: return@get call.respond(HttpStatusCode.Unauthorized)
+
             val id = call.parameters["id"]?.toIntOrNull()
                 ?: return@get call.respond(HttpStatusCode.BadRequest, "Неверный ID")
 
-            val employee = repository.getEmployeeById(id)
+            val employee = repository.getEmployeeById(id, userId)
                 ?: return@get call.respond(HttpStatusCode.NotFound, "Сотрудник не найден")
 
             call.respond(employee)
         }
-        // CREATE
+
         post {
+            val userId = call.principal<UserIdPrincipal>()?.name
+                ?: return@post call.respond(HttpStatusCode.Unauthorized)
+
             val request = call.receive<EmployeeRequest>()
             val employee = Employee(
+                userId = userId,  // ← привязываем к пользователю
                 name = request.name,
                 position = request.position,
                 phone = request.phone,
@@ -45,30 +60,39 @@ fun Route.employeeRoutes(repository: EmployeeRepository) {
             call.respond(HttpStatusCode.Created, created)
         }
 
-        // UPDATE
         put("{id}") {
+            val userId = call.principal<UserIdPrincipal>()?.name
+                ?: return@put call.respond(HttpStatusCode.Unauthorized)
+
             val id = call.parameters["id"]?.toIntOrNull()
                 ?: return@put call.respond(HttpStatusCode.BadRequest)
 
             val request = call.receive<EmployeeRequest>()
-            val success = repository.updateEmployee(id, Employee(
+            val success = repository.updateEmployee(
                 id = id,
-                name = request.name,
-                position = request.position,
-                phone = request.phone,
-                email = request.email,
-                department = request.department
-            ))
+                employee = Employee(
+                    id = id,
+                    userId = userId,
+                    name = request.name,
+                    position = request.position,
+                    phone = request.phone,
+                    email = request.email,
+                    department = request.department
+                ),
+                userId = userId
+            )
             if (success) call.respond(HttpStatusCode.OK)
             else call.respond(HttpStatusCode.NotFound)
         }
 
-        // DELETE
         delete("{id}") {
+            val userId = call.principal<UserIdPrincipal>()?.name
+                ?: return@delete call.respond(HttpStatusCode.Unauthorized)
+
             val id = call.parameters["id"]?.toIntOrNull()
                 ?: return@delete call.respond(HttpStatusCode.BadRequest)
 
-            val success = repository.deleteEmployee(id)
+            val success = repository.deleteEmployee(id, userId)
             if (success) call.respond(HttpStatusCode.NoContent)
             else call.respond(HttpStatusCode.NotFound)
         }

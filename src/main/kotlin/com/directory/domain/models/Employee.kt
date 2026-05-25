@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Employee(
     val id: Int? = null,
+    val userId: String = "",
     val name: String,
     val position: String,
     val phone: String,
